@@ -1,7 +1,7 @@
 // src/models/User.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-// const UserAddress = require('./UserAddress');
+const UserAddress = require('./UserAddress');
 
 const User = sequelize.define('users', {
   id: {
@@ -32,28 +32,32 @@ const User = sequelize.define('users', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  id_address: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-    // references: {
-    //   model: UserAddress,
-    //   key: 'id_address',
-    // },
-    // onDelete: 'SET NULL', // Atur sesuai kebutuhan (SET NULL, CASCADE, dll.)
-    // onUpdate: 'CASCADE',
-  },
+  // id_address: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: true,
+  //   references: {
+  //     model: UserAddress,
+  //     key: 'id',
+  //   },
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  // },
   photo: {
     type: DataTypes.STRING,
     allowNull: true,
   },
   gender: {
-    type: DataTypes.ENUM('Male', 'Female'), // Sesuaikan dengan pilihan gender yang diinginkan
-    allowNull: true, // Sesuaikan dengan kebutuhan, apakah boleh null atau tidak
+    type: DataTypes.ENUM('Male', 'Female'),
+    allowNull: true,
   },
-
   date_of_birth: {
     type: DataTypes.DATE,
     allowNull: true,
+  },
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'user',
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -68,6 +72,7 @@ const User = sequelize.define('users', {
 });
 
 // Menunjukkan bahwa User memiliki satu alamat (UserAddress)
-// User.hasOne(UserAddress, { foreignKey: 'id_address' });
+UserAddress.hasOne(User, { foreignKey: 'id_address'});
+User.belongsTo(UserAddress, { foreignKey: 'id_address'})
 
 module.exports = User;
