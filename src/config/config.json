@@ -1,0 +1,24 @@
+{
+    "development": {
+      "username": "root",
+      "password": null,
+      "database": "db_jude",
+      "host": "localhost",
+      "dialect": "mysql"
+    },
+    "test": {
+      "username": "root",
+      "password": "your_password",
+      "database": "your_database_name",
+      "host": "localhost",
+      "dialect": "mysql"
+    },
+    "production": {
+      "username": "root",
+      "password": "your_password",
+      "database": "your_database_name",
+      "host": "localhost",
+      "dialect": "mysql"
+    }
+  }
+  
