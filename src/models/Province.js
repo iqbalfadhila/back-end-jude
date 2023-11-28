@@ -1,10 +1,10 @@
 // src/models/Province.js
-const { DataTypes } = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 const sequelize = require('../config/db');
-const City = require('./City');
+const City = require('./City')
 
 const Province = sequelize.define('provinces', {
-  id_province: {
+  id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
@@ -26,9 +26,8 @@ const Province = sequelize.define('provinces', {
   },
 });
 
-// Definisi hubungan dengan model City (one-to-many)
-Province.associate = models => {
-  Province.hasMany(models.City, { as: 'cities', foreignKey: 'id_province' });
-};
+// Province.associate = models => {
+//   Province.hasMany(models.City);
+// };
 
 module.exports = Province;

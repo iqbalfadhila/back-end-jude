@@ -17,7 +17,7 @@ module.exports = {
       },
       fullname: {
         type: Sequelize.STRING,
-        allowNull: true // Ubah menjadi true jika ingin membolehkan fullname kosong
+        allowNull: true
       },
       email: {
         type: Sequelize.STRING,
@@ -30,30 +30,34 @@ module.exports = {
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: true // Ubah menjadi true jika ingin membolehkan phone kosong
+        allowNull: true
       },
-      id_address: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'user_addresses',
-          key: 'id_address',
-        },
-        onDelete: 'SET NULL', // Atur sesuai kebutuhan (SET NULL, CASCADE, dll.)
-        onUpdate: 'CASCADE',
-      },
-    
+      // id_address: {
+      //   type: Sequelize.INTEGER,
+      //   allowNull: true,
+      //   references: {
+      //     model: 'user_addresses',
+      //     key: 'id',
+      //   },
+      //   onDelete: 'CASCADE',
+      //   onUpdate: 'CASCADE',
+      // },
       photo: {
         type: Sequelize.STRING,
-        allowNull: true // Ubah menjadi true jika ingin membolehkan photo kosong
+        allowNull: true
       },
       gender: {
         type: Sequelize.ENUM('Male', 'Female'),
-        allowNull: true // Ubah menjadi true jika ingin membolehkan gender kosong
+        allowNull: true
       },
       date_of_birth: {
         type: Sequelize.DATE,
-        allowNull: true // Ubah menjadi false jika ingin memastikan date_of_birth tidak boleh kosong
+        allowNull: true 
+      },
+      role: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: 'user',
       },
       createdAt: {
         type: Sequelize.DATE,

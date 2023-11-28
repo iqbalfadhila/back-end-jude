@@ -4,22 +4,22 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('cities', {
-      id_city: {
+      id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-      id_province: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'provinces',
-          key: 'id_province',
-        },
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      },
+      // id_province: {
+      //   type: Sequelize.INTEGER,
+      //   allowNull: false,
+      //   references: {
+      //     model: 'provinces',
+      //     key: 'id',
+      //   },
+      //   onDelete: 'CASCADE',
+      //   onUpdate: 'CASCADE',
+      // },
       city_name: {
         type: Sequelize.STRING,
         allowNull: false,
