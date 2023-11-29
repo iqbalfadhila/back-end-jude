@@ -1,20 +1,11 @@
-# Use the official Node.js image as the base image
-FROM node:14
-
-# Set the working directory inside the container
+# Build dependencies
+FROM node:17-alpine as dependencies
 WORKDIR /src
-
-# Copy package.json and package-lock.json to the working directory
-COPY package.json /src
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code to the working directory
-COPY . .
-
-# Expose the port on which your application will run (adjust accordingly)
+COPY package.json .
+RUN npm i
+COPY . . 
+# Build production image
+FROM dependencies as builder
+RUN npm run build
 EXPOSE 3000
-
-# Command to run your application (adjust accordingly)
-CMD ["node", "app.js"]
+CMD npm run start
