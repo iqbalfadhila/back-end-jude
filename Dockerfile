@@ -1,20 +1,20 @@
-# Use the official Node.js image as the base image
+# Gunakan image resmi Node.js sebagai base image
 FROM node:14
 
-# Set the working directory inside the container
+# Setel direktori kerja di dalam kontainer
 WORKDIR /src
 
-# Copy package.json and package-lock.json to the working directory
+# Salin package.json dan package-lock.json ke direktori kerja
 COPY package*.json ./
 
-# Install dependencies
+# Install dependensi
 RUN npm install
 
-# Copy the rest of the application code to the working directory
+# Salin seluruh kode aplikasi ke direktori kerja
 COPY . .
 
-# Expose the port on which your application will run (adjust accordingly)
+# Ungkapkan port tempat aplikasi akan berjalan (sesuaikan jika perlu)
 EXPOSE 3000
 
-# Command to run your application (adjust accordingly)
-CMD ["node", "app.js"]
+# Perintah untuk menjalankan aplikasi (sesuaikan jika perlu)
+CMD ["node", "src/app.js"]
