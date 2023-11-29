@@ -6,11 +6,10 @@ const authRoutes = require('./routes/authRoutes');
 const provinceRoutes = require('./routes/provinceRoutes');
 const cityRoutes = require('./routes/cityRoutes');
 const userAddressRoutes = require('./routes/userAddressRoutes');
+const storeRoutes = require('./routes/storeRoutes');
+const userRoutes = require('./routes/userRoutes')
 const authenticateToken = require('./middleware/authenticateToken');
 const authorizeRole = require('./middleware/authorizeRole');
-// const db = require("./models");
-// const City = require('./models/City');
-// const Province = require('./models/Province');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -25,20 +24,22 @@ app.use('/auth', authRoutes);
 app.use('/api/province', authenticateToken, provinceRoutes);
 app.use('/api/city', authenticateToken, cityRoutes);
 app.use('/api/user-address', authenticateToken, userAddressRoutes);
+app.use('/api/store', authenticateToken, storeRoutes);
+app.use('/api/user', authenticateToken, userRoutes);
 
-app.get ("/test", authenticateToken, async (res, req) => {
-  // const province = await Province.findByPk(1);
-  // const cities = await province.getCities();
+// app.get ("/test", authenticateToken, async (res, req) => {
+//   // const province = await Province.findByPk(1);
+//   // const cities = await province.getCities();
 
-  // // Menampilkan nama-nama kota
-  // cities.forEach(city => {
-  //   console.log(city.city_name);
-  // });
-  // const city = await City.findByPk(1);
-  // const province = await city.getProvince();
+//   // // Menampilkan nama-nama kota
+//   // cities.forEach(city => {
+//   //   console.log(city.city_name);
+//   // });
+//   // const city = await City.findByPk(1);
+//   // const province = await city.getProvince();
 
-  // console.log(province);
-})
+//   // console.log(province);
+// })
 
 app.get('/user', authenticateToken, authorizeRole('user'), (req, res) => {
   res.json({ message: 'Halo, pengguna biasa!' });
