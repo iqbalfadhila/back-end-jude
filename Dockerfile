@@ -1,15 +1,20 @@
-FROM node:16.17.1
+# Use the official Node.js image as the base image
+FROM node:14
 
- 
-
+# Set the working directory inside the container
 WORKDIR /app
 
+# Copy package.json and package-lock.json to the working directory
 COPY package.json /app
 
+# Install dependencies
 RUN npm install
 
-COPY . /app
+# Copy the rest of the application code to the working directory
+COPY . .
 
-CMD [“node”, “app.js”]
-
+# Expose the port on which your application will run (adjust accordingly)
 EXPOSE 3000
+
+# Command to run your application (adjust accordingly)
+CMD ["node", "app.js"]
