@@ -1,4 +1,3 @@
-# /.env
-/.sequelizerc
+/.env
 /node_modules
-/package-lock.json
+/.vscode

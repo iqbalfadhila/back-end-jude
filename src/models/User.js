@@ -2,6 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const UserAddress = require('./UserAddress');
+const Store = require('./Store');
 
 const User = sequelize.define('users', {
   id: {
@@ -74,5 +75,8 @@ const User = sequelize.define('users', {
 // Menunjukkan bahwa User memiliki satu alamat (UserAddress)
 UserAddress.hasOne(User, { foreignKey: 'id_address'});
 User.belongsTo(UserAddress, { foreignKey: 'id_address'})
+
+Store.hasOne(User, { foreignKey: 'id_store' });
+User.belongsTo(Store, { foreignKey: 'id_store' });
 
 module.exports = User;
