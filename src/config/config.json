@@ -15,9 +15,9 @@
     },
     "production": {
       "username": "root",
-      "password": "your_password",
-      "database": "your_database_name",
-      "host": "localhost",
+      "password": "testdbjude",
+      "database": "db_jude",
+      "host": "127.0.0.1",
       "dialect": "mysql"
     }
   }
