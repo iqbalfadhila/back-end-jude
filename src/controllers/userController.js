@@ -1,26 +1,24 @@
 const User = require("../models/User");
-
 const updateUser = async (req, res) => {
-  const userId = req.user.id; // Assuming you get the user ID from the authenticated user
+  const userId = req.user.id;
 
   // Extract the fields you want to update from the request body
-  const { username, email, fullname, phone, gender, date_of_birth } = req.body;
+  const { username, email, fullname, phone, gender, date_of_birth, photo } = req.body;
 
   // Validasi bahwa setidaknya satu field harus diisi untuk melakukan update
-  if (!username && !email && !fullname && !phone && !gender && !date_of_birth) {
+  if (!username && !email && !fullname && !phone && !gender && !date_of_birth && !photo) {
     return res.status(400).json({ message: 'At least one field must be filled in for update.' });
   }
 
   try {
     // Cek apakah user dengan ID tersebut ada
-    console.log(User);
     const existingUser = await User.findByPk(userId);
 
     if (!existingUser) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Update user data
+    // Update user data termasuk foto jika diunggah
     await existingUser.update({
       username: username || existingUser.username,
       email: email || existingUser.email,
@@ -28,6 +26,7 @@ const updateUser = async (req, res) => {
       phone: phone || existingUser.phone,
       gender: gender || existingUser.gender,
       date_of_birth: date_of_birth || existingUser.date_of_birth,
+      photo: req.file ? req.file.filename : existingUser.photo, // Gunakan nama file baru jika foto diunggah
     });
 
     res.json({ message: 'User data updated successfully.' });
@@ -36,6 +35,7 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 const getAllUser = async (req, res) => {
   try {
