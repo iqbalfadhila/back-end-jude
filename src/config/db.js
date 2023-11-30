@@ -3,12 +3,12 @@ const { Sequelize } = require('sequelize');
 const config = require('./config.json')[process.env.NODE_ENV || 'development'];
 
 const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
+  process.env.NAME || config.database,
+  process.env.DB_USER || config.username,
+  process.env.DB_PASSWORD || config.password,
   {
-    host: config.host,
-    dialect: config.dialect
+    host: process.env.DB_HOST || config.host,
+    dialect: process.env.DB_DIALECT || config.dialect || 'mysql'
   }
 );
 
