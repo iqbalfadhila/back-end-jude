@@ -20,7 +20,7 @@ steps:
     - 'managed'
     - '--allow-unauthenticated'  # Remove if not needed
     - '--port'
-    - '3000'  # Update with your Node.js application port
+    - '8080'  # Update with your Node.js application port
     - '--memory'
     - '256Mi'  # Update with your preferred memory limit
     - '--cpu'

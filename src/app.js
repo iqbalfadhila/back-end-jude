@@ -16,7 +16,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 
@@ -47,8 +47,8 @@ app.get('/user', authenticateToken, authorizeRole('user'), (req, res) => {
   res.json({ message: 'Halo, pengguna biasa!' });
 });
 // Sync database dan jalankan server
-// sequelize.sync({force: false}).then(() => {
+sequelize.sync({force: false}).then(() => {
   app.listen(port, () => {
     console.log(`Server berjalan di http://localhost:${port}`);
   });
-// });
+});

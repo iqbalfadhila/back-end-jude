@@ -20,7 +20,7 @@ RUN npm install --production --silent
 COPY . .
 
 # Expose port 3000
-EXPOSE 3000
+EXPOSE 8080
 
 # Change ownership to the 'node' user
 RUN chown -R node /usr/src/app
