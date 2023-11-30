@@ -6,7 +6,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/jude-406606/gcr.io/jude-406606/github.com']
 # Deploy container image to Cloud Run
-- name: 'gcr.io/cloud-builders/gcloud'
+- name: 'gcr.io/cloud-builders/docker'
   entrypoint: gcloud
   args: ['run', 'deploy', 'test-jude', '--image', 'gcr.io/jude-406606/gcr.io/jude-406606/github.com', '--region', 'us-central1']
 images:
