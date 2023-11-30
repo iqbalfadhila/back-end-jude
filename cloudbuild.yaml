@@ -8,6 +8,22 @@ steps:
 # Deploy container image to Cloud Run
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
-  args: ['run', 'deploy', 'test-jude', '--image', 'gcr.io/jude-406606/gcr.io/jude-406606/github.com', '--region', 'us-central1']
+  args:
+    - 'run'
+    - 'deploy'
+    - 'test-jude'
+    - '--image'
+    - 'gcr.io/jude-406606/github.com'
+    - '--region'
+    - 'us-central1'
+    - '--platform'
+    - 'managed'
+    - '--allow-unauthenticated'  # Remove if not needed
+    - '--port'
+    - '8080'  # Update with your Node.js application port
+    - '--memory'
+    - '256Mi'  # Update with your preferred memory limit
+    - '--cpu'
+    - '1'  # Update with your preferred CPU limit
 images:
 - gcr.io/jude-406606/gcr.io/jude-406606/github.com
