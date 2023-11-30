@@ -26,6 +26,6 @@ steps:
     - '--cpu'
     - '1'  # Update with your preferred CPU limit
     - '--set-env-vars'
-    - 'DB_HOST=jude-406606:us-central1:testdbjude,DB_USER=root,DB_PASSWORD=testdbjude,DB_NAME=db_jude,PORT=3000,SECRET_KEY="iR0FfMkRs51UaWiaxF1WOtgwwrdaXuQmCJTIa3KmvK2TbH0ERdTpKZBrjug1fbtb"'
+    - 'DB_HOST=jude-406606:us-central1:testdbjude,DB_USER=root,DB_PASSWORD=testdbjude,DB_NAME=db_jude,SECRET_KEY="iR0FfMkRs51UaWiaxF1WOtgwwrdaXuQmCJTIa3KmvK2TbH0ERdTpKZBrjug1fbtb"'
 images:
 - gcr.io/jude-406606/gcr.io/jude-406606/github.com
