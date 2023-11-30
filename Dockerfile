@@ -1,5 +1,5 @@
 # Gunakan node:lts-alpine sebagai base image
-FROM node:lts-alpine
+FROM node:16-alpine
 
 # Set environment production
 ENV NODE_ENV=production
