@@ -26,8 +26,4 @@ const Province = sequelize.define('provinces', {
   },
 });
 
-// Province.associate = models => {
-//   Province.hasMany(models.City);
-// };
-
 module.exports = Province;
