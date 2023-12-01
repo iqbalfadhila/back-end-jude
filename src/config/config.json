@@ -1,10 +1,13 @@
 {
     "development": {
       "username": "root",
-      "password": null,
+      "password": "testdbjude",
       "database": "db_jude",
-      "host": "localhost",
-      "dialect": "mysql"
+      "host": "",
+      "dialect": "mysql",
+      "dialectOptions": {
+        "socketPath": "/cloudsql/jude-406606:us-central1:testdbjude"
+      }
     },
     "test": {
       "username": "root",
