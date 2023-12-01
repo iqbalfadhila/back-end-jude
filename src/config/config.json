@@ -1,9 +1,9 @@
 {
     "development": {
       "username": "root",
-      "password": null,
+      "password": "testdbjude",
       "database": "db_jude",
-      "host": "localhost",
+      "host": "jude-406606:us-central1:testdbjude",
       "dialect": "mysql"
     },
     "test": {
