@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD || config.password,
   {
     host: process.env.DB_HOST || config.host,
-    dialect: process.env.DB_DIALECT || config.dialect || 'mysql',
+    dialect: 'mysql' ,
     dialectOptions: {
       socketPath: `/cloudsql/${process.env.DB_SOCKET_PATH}` || config.socketPath
     }
