@@ -2,9 +2,11 @@ steps:
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/jude-406606/gcr.io/jude-406606/github.com', '.']
+
 # Push the container image to Container Registry
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/jude-406606/gcr.io/jude-406606/github.com']
+
 # Deploy container image to Cloud Run
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
@@ -28,4 +30,4 @@ steps:
     - '--cpu'
     - '1'  # Update with your preferred CPU limit
 images:
-- gcr.io/jude-406606/gcr.io/jude-406606/github.com
+- 'gcr.io/jude-406606/github.com'

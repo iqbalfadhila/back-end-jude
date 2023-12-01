@@ -17,7 +17,7 @@
       "username": "root",
       "password": "testdbjude",
       "database": "db_jude",
-      "host": "34.71.117.65",
+      "host": "",
       "dialect": "mysql",
       "dialectOptions": {
         "socketPath": "/cloudsql/jude-406606:us-central1:testdbjude"
