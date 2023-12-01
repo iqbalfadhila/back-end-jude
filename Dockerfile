@@ -14,7 +14,7 @@ COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
 RUN npm install -g npm@8.15.0
 
 # Install dependencies in production mode
-RUN  mv node_modules ../
+RUN npm install --production --silent
 
 # Copy the rest of the application files
 COPY . .
