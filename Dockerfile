@@ -11,10 +11,7 @@ WORKDIR /usr/src/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
 
 # Update npm to version 10.2.4
-RUN npm install -g npm@8.15.0
-
-# Install dependencies in production mode
-RUN npm install --production --silent
+RUN npm install -g npm@8.15.0 --production
 
 # Copy the rest of the application files
 COPY . .
