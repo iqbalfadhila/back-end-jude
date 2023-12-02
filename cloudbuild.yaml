@@ -15,7 +15,7 @@ steps:
     - 'deploy'
     - 'test-jude'
     - '--image'
-    - 'gcr.io/jude-406606/github.com'
+    - 'gcr.io/jude-406606/gcr.io/jude-406606/github.com'
     - '--set-env-vars'
     - 'DB_USER=root,DB_PASS=testdbjude,DB_NAME=db_jude,INSTANCE_HOST=jude-406606:us-central1:testdbjude,DB_PORT=3306'
     - '--region'
@@ -30,7 +30,7 @@ steps:
     - '--cpu'
     - '1'  # Update with your preferred CPU limit
 images:
-- 'gcr.io/jude-406606/github.com'
+- 'gcr.io/jude-406606/gcr.io/jude-406606/github.com'
 
 # steps:
 #   - id: "docker-build"
