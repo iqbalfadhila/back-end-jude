@@ -17,7 +17,7 @@ steps:
     - '--image'
     - 'gcr.io/jude-406606/gcr.io/jude-406606/github.com'
     - '--set-env-vars'
-    - 'DB_USER=root,DB_PASS=testdbjude,DB_NAME=db_jude,INSTANCE_HOST=34.71.117.65,DB_PORT=3306'
+    - 'DB_USER=root,DB_PASS=testdbjude,DB_NAME=db_jude,INSTANCE_HOST=34.71.117.65,DB_PORT=3306,SECRET_KEY="iR0FfMkRs51UaWiaxF1WOtgwwrdaXuQmCJTIa3KmvK2TbH0ERdTpKZBrjug1fbtb"'
     - '--region'
     - 'us-central1'
     - '--platform'
