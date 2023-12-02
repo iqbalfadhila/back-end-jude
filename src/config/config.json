@@ -3,10 +3,10 @@
       "username": "root",
       "password": "testdbjude",
       "database": "db_jude",
-      "host": "",
+      "host": "jude-406606:us-central1:testdbjude",
       "dialect": "mysql",
       "dialectOptions": {
-        "socketPath": "/cloudsql/jude-406606:us-central1:testdbjude"
+        "socketPath": "jude:us-central1:testdbjude"
       }
     },
     "test": {
