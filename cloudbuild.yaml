@@ -17,7 +17,7 @@ steps:
     - '--image'
     - 'gcr.io/jude-406606/github.com'
     - '--set-env-vars'
-    - 'NODE_ENV=production,DB_USER=root,DB_PASSWORD=testdbjude,DB_NAME=db_jude,SECRET_KEY="iR0FfMkRs51UaWiaxF1WOtgwwrdaXuQmCJTIa3KmvK2TbH0ERdTpKZBrjug1fbtb",DB_SOCKET_PATH=jude-406606:us-central1:testdbjude'
+    - 'DB_USER=root,DB_PASS=testdbjude,DB_NAME=db_jude,SECRET_KEY="iR0FfMkRs51UaWiaxF1WOtgwwrdaXuQmCJTIa3KmvK2TbH0ERdTpKZBrjug1fbtb",INSTANCE_UNIX_SOCKET=jude-406606:us-central1:testdbjude'
     - '--region'
     - 'us-central1'
     - '--platform'
