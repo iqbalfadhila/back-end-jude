@@ -7,23 +7,12 @@ const config = {
   database: process.env.DB_NAME,
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
-  host: process.env.INSTANCE_UNIX_SOCKET,
+  host: process.env.INSTANCE_HOST,
+  port: process.env.DB_PORT,
   dialect: 'mysql',
 }
 
 const sequelize = new Sequelize(config);
-
-// const sequelize = new Sequelize(
-//   process.env.DB_NAME || config.database,
-//   process.env.DB_USER || config.username,
-//   process.env.DB_PASSWORD || config.password,
-//   {
-//     dialect: 'mysql',
-//     dialectOptions: {
-//       socketPath: "/cloudsql/jude:us-central1:testdbjude"
-//     }
-//   }
-// );
 
 sequelize.authenticate()
   .then(() => {
