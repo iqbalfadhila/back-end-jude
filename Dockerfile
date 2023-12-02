@@ -12,7 +12,6 @@ COPY ["package.json", "package-lock.json*", "./"]
 
 # Update npm to version 10.2.4
 RUN npm install -g npm@8.15.0 --production
-RUN npm list
 
 # Copy the rest of the application files
 COPY . .
