@@ -86,6 +86,14 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { identifier, password } = req.body;
 
+  if (!identifier) {
+    return res.status(400).json({ message: 'Username/Email/Phone must be filled in.' });
+  }
+
+  if (!password) {
+    return res.status(400).json({ message: 'password must be filled in.' });
+  }
+
   try {
     // Menggunakan [Op.or] untuk mencari berdasarkan email, username, atau phone
     const user = await User.findOne({
