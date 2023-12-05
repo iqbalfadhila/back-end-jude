@@ -4,6 +4,7 @@ const Store = require('../models/Store');
 const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const multer = require('multer');
+const { Op } = require('sequelize');
 
 const storage = new Storage({
   keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'), // Replace with the path to your key file
@@ -15,11 +16,11 @@ const bucket = storage.bucket('bucket-jude-406606'); // Replace with your Google
 const upload = multer({storage: multer.memoryStorage()});
 
 const createStore = async (req, res) => {
-  const { store_name, photo, background, description } = req.body;
+  const { store_name, description, email_store, phone_store } = req.body;
 
   try {
     const userId = req.user.id;
-    // const storeId = req.user.id_store;
+
     // Cek apakah pengguna sudah memiliki toko
     const existingStore = await User.findByPk(userId);
 
@@ -33,13 +34,76 @@ const createStore = async (req, res) => {
       return res.status(400).json({ message: 'Nama toko sudah digunakan. Silakan pilih nama lain.' });
     }
 
+    // Ambil file gambar dari request
+    const photoFile = req.files['photo'] ? req.files['photo'][0] : null;
+    const backgroundFile = req.files['background'] ? req.files['background'][0] : null;
+
+    // Validasi format dan ukuran file untuk photo
+    if (photoFile) {
+      if (!photoFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk photo!' });
+      }
+
+      if (photoFile.size > 2 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file photo melebihi batas 2 MB.' });
+      }
+    }
+
+    // Validasi format dan ukuran file untuk background
+    if (backgroundFile) {
+      if (!backgroundFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk background!' });
+      }
+
+      if (backgroundFile.size > 2 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file background melebihi batas 2 MB.' });
+      }
+    }
+
     // Buat toko baru
-    const newStore = await Store.create({ 
-        store_name,
-        photo,
-        background,
-        description,
-    });
+    const newStore = await Store.create({ store_name, description, email_store, phone_store });
+
+    // Simpan file photo ke Google Cloud Storage
+    if (photoFile) {
+      const folderName = "profileStore";
+      const fileNamePhoto = `${folderName}/store_${newStore.id}_photo_${Date.now()}${path.extname(photoFile.originalname)}`;
+      const fileBufferPhoto = photoFile.buffer;
+
+      const blobPhoto = bucket.file(fileNamePhoto);
+      const blobStreamPhoto = blobPhoto.createWriteStream();
+
+      blobStreamPhoto.on('error', (err) => {
+        console.error('Error uploading photo to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading photo to Google Cloud Storage' });
+      });
+
+      blobStreamPhoto.on('finish', async () => {
+        await newStore.update({ photo: fileNamePhoto });
+      });
+
+      blobStreamPhoto.end(fileBufferPhoto);
+    }
+
+    // Simpan file background ke Google Cloud Storage
+    if (backgroundFile) {
+      const folderName = "profileStore";
+      const fileNameBackground = `${folderName}/store_${newStore.id}_background_${Date.now()}${path.extname(backgroundFile.originalname)}`;
+      const fileBufferBackground = backgroundFile.buffer;
+
+      const blobBackground = bucket.file(fileNameBackground);
+      const blobStreamBackground = blobBackground.createWriteStream();
+
+      blobStreamBackground.on('error', (err) => {
+        console.error('Error uploading background to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading background to Google Cloud Storage' });
+      });
+
+      blobStreamBackground.on('finish', async () => {
+        await newStore.update({ background: fileNameBackground });
+      });
+
+      blobStreamBackground.end(fileBufferBackground);
+    }
 
     // Perbarui role pengguna menjadi "designer" dan simpan ID toko
     await User.update({ role: 'designer', id_store: newStore.id }, { where: { id: userId } });
@@ -52,10 +116,8 @@ const createStore = async (req, res) => {
 };
 
 const updateStore = async (req, res) => {
-  const { store_name, photo, background, description } = req.body;
-  const storeId = req.user.id_store;
+  const { store_name, description, email_store, phone_store } = req.body;
   const userId = req.user.id;
-  console.log(req.user);
 
   try {
     // Cek apakah pengguna memiliki toko
@@ -65,21 +127,91 @@ const updateStore = async (req, res) => {
       return res.status(404).json({ message: 'Toko tidak ditemukan.' });
     }
 
-    const storeWithNameExists = await Store.findOne({ where: { store_name } });
+    const storeWithNameExists = await Store.findOne({
+      where: { store_name, id: { [Op.not]: existingStore.id_store } }
+    });
 
     if (storeWithNameExists) {
       return res.status(400).json({ message: 'Nama toko sudah digunakan. Silakan pilih nama lain.' });
     }
 
-    const UserStore = existingStore.id_store;
+    const userStoreId = existingStore.id_store;
 
-    // Perbarui informasi toko
-    await Store.update({ 
-      store_name,
-      photo,
-      background,
-      description,
-    }, { where: { id: UserStore }});
+    // Ambil file gambar dari request
+    const photoFile = req.files['photo'] ? req.files['photo'][0] : null;
+    const backgroundFile = req.files['background'] ? req.files['background'][0] : null;
+
+    // Validasi format dan ukuran file untuk photo
+    if (photoFile) {
+      if (!photoFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk photo!' });
+      }
+
+      if (photoFile.size > 2 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file photo melebihi batas 2 MB.' });
+      }
+    }
+
+    // Validasi format dan ukuran file untuk background
+    if (backgroundFile) {
+      if (!backgroundFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk background!' });
+      }
+
+      if (backgroundFile.size > 2 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file background melebihi batas 2 MB.' });
+      }
+    }
+
+    // Update informasi toko
+    await Store.update(
+      { store_name, description, email_store, phone_store },
+      { where: { id: userStoreId } }
+    );
+
+    // Simpan file photo ke Google Cloud Storage
+    if (photoFile) {
+      const folderName = "profileStore";
+      const fileNamePhoto = `${folderName}/store_${userStoreId}_photo_${Date.now()}${path.extname(photoFile.originalname)}`;
+      const fileBufferPhoto = photoFile.buffer;
+
+      const blobPhoto = bucket.file(fileNamePhoto);
+      const blobStreamPhoto = blobPhoto.createWriteStream();
+
+      blobStreamPhoto.on('error', (err) => {
+        console.error('Error uploading photo to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading photo to Google Cloud Storage' });
+      });
+
+      blobStreamPhoto.on('finish', async () => {
+        // Update data toko dengan URL foto baru
+        await Store.update({ photo: fileNamePhoto }, { where: { id: userStoreId } });
+      });
+
+      blobStreamPhoto.end(fileBufferPhoto);
+    }
+
+    // Simpan file background ke Google Cloud Storage
+    if (backgroundFile) {
+      const folderName = "profileStore";
+      const fileNameBackground = `${folderName}/store_${userStoreId}_background_${Date.now()}${path.extname(backgroundFile.originalname)}`;
+      const fileBufferBackground = backgroundFile.buffer;
+
+      const blobBackground = bucket.file(fileNameBackground);
+      const blobStreamBackground = blobBackground.createWriteStream();
+
+      blobStreamBackground.on('error', (err) => {
+        console.error('Error uploading background to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading background to Google Cloud Storage' });
+      });
+
+      blobStreamBackground.on('finish', async () => {
+        // Update data toko dengan URL background baru
+        await Store.update({ background: fileNameBackground }, { where: { id: userStoreId } });
+      });
+
+      blobStreamBackground.end(fileBufferBackground);
+    }
 
     res.json({ message: 'Informasi toko berhasil diperbarui.' });
   } catch (error) {
@@ -141,6 +273,7 @@ const deleteStore = async (req, res) => {
   
   module.exports = {
     createStore,
+    upload,
     updateStore,
     getAllStore,
     getStoreById,
