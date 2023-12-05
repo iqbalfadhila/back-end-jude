@@ -1,17 +1,36 @@
 // src/controllers/storeController.js
 const User = require('../models/User');
 const Store = require('../models/Store');
+const { Storage } = require('@google-cloud/storage');
+const path = require('path');
+const multer = require('multer');
+
+const storage = new Storage({
+  keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'), // Replace with the path to your key file
+  projectId: 'jude-406606', // Replace with your Google Cloud Project ID
+});
+
+const bucket = storage.bucket('bucket-jude-406606'); // Replace with your Google Cloud Storage bucket name
+
+const upload = multer({storage: multer.memoryStorage()});
 
 const createStore = async (req, res) => {
   const { store_name, photo, background, description } = req.body;
 
   try {
-    const storeId = req.user.id_store;
+    const userId = req.user.id;
+    // const storeId = req.user.id_store;
     // Cek apakah pengguna sudah memiliki toko
-    const existingStore = await Store.findByPk(storeId);
+    const existingStore = await User.findByPk(userId);
 
-    if (existingStore) {
+    if (existingStore.id_store !== null) {
       return res.status(400).json({ message: 'Anda sudah memiliki toko.' });
+    }
+
+    const storeWithNameExists = await Store.findOne({ where: { store_name } });
+
+    if (storeWithNameExists) {
+      return res.status(400).json({ message: 'Nama toko sudah digunakan. Silakan pilih nama lain.' });
     }
 
     // Buat toko baru
@@ -35,23 +54,32 @@ const createStore = async (req, res) => {
 const updateStore = async (req, res) => {
   const { store_name, photo, background, description } = req.body;
   const storeId = req.user.id_store;
+  const userId = req.user.id;
   console.log(req.user);
 
   try {
     // Cek apakah pengguna memiliki toko
-    const existingStore = await Store.findByPk(storeId);
+    const existingStore = await User.findByPk(userId);
 
-    if (!existingStore) {
+    if (!existingStore.id_store) {
       return res.status(404).json({ message: 'Toko tidak ditemukan.' });
     }
 
+    const storeWithNameExists = await Store.findOne({ where: { store_name } });
+
+    if (storeWithNameExists) {
+      return res.status(400).json({ message: 'Nama toko sudah digunakan. Silakan pilih nama lain.' });
+    }
+
+    const UserStore = existingStore.id_store;
+
     // Perbarui informasi toko
-    await existingStore.update({ 
+    await Store.update({ 
       store_name,
       photo,
       background,
       description,
-    });
+    }, { where: { id: UserStore }});
 
     res.json({ message: 'Informasi toko berhasil diperbarui.' });
   } catch (error) {
@@ -109,7 +137,7 @@ const deleteStore = async (req, res) => {
       console.error('Error deleting store:', error.message);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  };
+};
   
   module.exports = {
     createStore,
