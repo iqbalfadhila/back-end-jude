@@ -1,10 +1,24 @@
 // src/controllers/productController.js
 const Product = require('../models/Product');
 const Store = require('../models/Store');
+const { Storage } = require('@google-cloud/storage');
+const path = require('path');
+const multer = require('multer');
+const { Op } = require('sequelize');
+
+const storage = new Storage({
+  keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'), // Replace with the path to your key file
+  projectId: 'jude-406606', // Replace with your Google Cloud Project ID
+});
+
+const bucket = storage.bucket('bucket-jude-406606'); // Replace with your Google Cloud Storage bucket name
+
+const upload = multer({storage: multer.memoryStorage()});
 
 const createProduct = async (req, res) => {
-  const { photo, name, price, description, file_psd, file_mockup } = req.body;
+  const { name, price, description, categoryId } = req.body;
   const storeId = req.user.id_store; // Ambil ID toko dari pengguna yang terautentikasi
+  console.log(storeId);
 
   try {
     // Cek apakah toko dengan ID tersebut ada
@@ -14,8 +28,123 @@ const createProduct = async (req, res) => {
       return res.status(404).json({ message: 'Toko tidak ditemukan.' });
     }
 
+    // Ambil file gambar dan file PSD dari request
+    const photoFile = req.files['photo'] ? req.files['photo'][0] : null;
+    const psdFile = req.files['file_psd'] ? req.files['file_psd'][0] : null;
+    const mockupFile = req.files['file_mockup'] ? req.files['file_mockup'][0] : null;
+
+    // ... Validasi format dan ukuran file ...
+    // Validasi format dan ukuran file untuk photo
+    if (photoFile) {
+      if (!photoFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk photo!' });
+      }
+
+      if (photoFile.size > 2 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file photo melebihi batas 2 MB.' });
+      }
+    }
+
+    // Validasi format dan ukuran file untuk file PSD
+    if (psdFile) {
+      const allowedExtensions = ['.psd'];
+    
+      const fileExtension = path.extname(psdFile.originalname).toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        return res.status(400).json({ message: 'Hanya file PSD yang diperbolehkan untuk file PSD!' });
+      }
+    
+      if (psdFile.size > 10 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file PSD melebihi batas 10 MB.' });
+      }
+    }
+
+    // Validasi format dan ukuran file untuk mockup
+    if (mockupFile) {
+      if (!mockupFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk mockup!' });
+      }
+
+      if (mockupFile.size > 5 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file mockup melebihi batas 5 MB.' });
+      }
+    }
+
     // Buat produk baru di dalam toko
-    const newProduct = await Product.create({ photo, name, price, description, file_psd, file_mockup, storeId });
+    const newProduct = await Product.create({
+      name,
+      price,
+      description,
+      categoryId,
+      storeId,
+      // ...Tambahkan atribut lain yang sesuai dengan kebutuhan model Product...
+    });
+
+    // Simpan file foto ke Google Cloud Storage
+    if (photoFile) {
+      const folderName = "fileproduct";
+      const fileNamePhoto = `${folderName}/product_${newProduct.id}_photo_${Date.now()}${path.extname(photoFile.originalname)}`;
+      const fileBufferPhoto = photoFile.buffer;
+
+      const blobPhoto = bucket.file(fileNamePhoto);
+      const blobStreamPhoto = blobPhoto.createWriteStream();
+
+      blobStreamPhoto.on('error', (err) => {
+        console.error('Error uploading photo to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading photo to Google Cloud Storage' });
+      });
+
+      blobStreamPhoto.on('finish', async () => {
+        // Update data produk dengan URL foto baru
+        await Product.update({ photo: fileNamePhoto }, { where: { id: newProduct.id } });
+      });
+
+      blobStreamPhoto.end(fileBufferPhoto);
+    }
+
+    // Simpan file PSD ke Google Cloud Storage
+    if (psdFile) {
+      const folderName = "fileproduct";
+      const fileNamePSD = `${folderName}/product_${newProduct.id}_psd_${Date.now()}${path.extname(psdFile.originalname)}`;
+      const fileBufferPSD = psdFile.buffer;
+
+      const blobPSD = bucket.file(fileNamePSD);
+      const blobStreamPSD = blobPSD.createWriteStream();
+
+      blobStreamPSD.on('error', (err) => {
+        console.error('Error uploading PSD to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading PSD to Google Cloud Storage' });
+      });
+
+      blobStreamPSD.on('finish', async () => {
+        // Update data produk dengan URL PSD baru
+        await Product.update({ file_psd: fileNamePSD }, { where: { id: newProduct.id } });
+      });
+
+      blobStreamPSD.end(fileBufferPSD);
+    }
+
+    // Simpan file mockup ke Google Cloud Storage
+    if (mockupFile) {
+      const folderName = "fileproduct";
+      const fileNameMockup = `${folderName}/product_${newProduct.id}_mockup_${Date.now()}${path.extname(mockupFile.originalname)}`;
+      const fileBufferMockup = mockupFile.buffer;
+
+      const blobMockup = bucket.file(fileNameMockup);
+      const blobStreamMockup = blobMockup.createWriteStream();
+
+      blobStreamMockup.on('error', (err) => {
+        console.error('Error uploading mockup to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading mockup to Google Cloud Storage' });
+      });
+
+      blobStreamMockup.on('finish', async () => {
+        // Update data produk dengan URL mockup baru
+        await Product.update({ file_mockup: fileNameMockup }, { where: { id: newProduct.id } });
+      });
+
+      blobStreamMockup.end(fileBufferMockup);
+    }
 
     res.status(201).json({ message: 'Produk berhasil ditambahkan.', product: newProduct });
   } catch (error) {
@@ -69,7 +198,7 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const productId = req.params.id;
-  const { photo, name, price, description, file_psd, file_mockup } = req.body;
+  const { name, price, description, categoryId } = req.body;
 
   try {
     // Cek apakah produk dengan ID tersebut ada
@@ -79,9 +208,130 @@ const updateProduct = async (req, res) => {
       return res.status(404).json({ message: 'Produk tidak ditemukan.' });
     }
 
-    // Perbarui informasi produk
-    await existingProduct.update({ photo, name, price, description, file_psd, file_mockup });
+    // Ambil file gambar, file PSD, dan file mockup dari request
+    const photoFile = req.files['photo'] ? req.files['photo'][0] : null;
+    const psdFile = req.files['file_psd'] ? req.files['file_psd'][0] : null;
+    const mockupFile = req.files['file_mockup'] ? req.files['file_mockup'][0] : null;
 
+    // Validasi format dan ukuran file untuk photo
+    if (photoFile) {
+      if (!photoFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk photo!' });
+      }
+
+      if (photoFile.size > 2 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file photo melebihi batas 2 MB.' });
+      }
+    }
+
+    // Validasi format dan ukuran file untuk file PSD
+    if (psdFile) {
+      const allowedExtensions = ['.psd'];
+    
+      const fileExtension = path.extname(psdFile.originalname).toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        return res.status(400).json({ message: 'Hanya file PSD yang diperbolehkan untuk file PSD!' });
+      }
+
+      if (psdFile.size > 10 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file PSD melebihi batas 10 MB.' });
+      }
+    }
+
+    // Validasi format dan ukuran file untuk mockup
+    if (mockupFile) {
+      if (!mockupFile.mimetype.startsWith('image/')) {
+        return res.status(400).json({ message: 'Hanya file gambar yang diperbolehkan untuk mockup!' });
+      }
+
+      if (mockupFile.size > 5 * 1024 * 1024) {
+        return res.status(400).json({ message: 'Ukuran file mockup melebihi batas 5 MB.' });
+      }
+    }
+
+    // Perbarui informasi produk
+    const updatedProductData = {
+      name,
+      price,
+      description,
+      categoryId
+      // ...Tambahkan atribut lain yang sesuai dengan kebutuhan model Product...
+    };
+
+    // Simpan file foto ke Google Cloud Storage
+    if (photoFile) {
+      const folderName = "fileproduct";
+      const fileNamePhoto = `${folderName}/product_${productId}_photo_${Date.now()}${path.extname(photoFile.originalname)}`;
+      const fileBufferPhoto = photoFile.buffer;
+
+      const blobPhoto = bucket.file(fileNamePhoto);
+      const blobStreamPhoto = blobPhoto.createWriteStream();
+
+      blobStreamPhoto.on('error', (err) => {
+        console.error('Error uploading photo to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading photo to Google Cloud Storage' });
+      });
+
+      blobStreamPhoto.on('finish', async () => {
+        // Update data produk dengan URL foto baru
+        updatedProductData.photo = fileNamePhoto;
+        await existingProduct.update(updatedProductData);
+        // Jangan lupa hapus file photo lama jika perlu
+        // await deleteOldFile(existingProduct.photo);
+      });
+
+      blobStreamPhoto.end(fileBufferPhoto);
+    }
+
+    // Proses serupa untuk file PSD
+    if (psdFile) {
+      const folderName = "fileproduct";
+      const fileNamePSD = `${folderName}/product_${productId}_psd_${Date.now()}${path.extname(psdFile.originalname)}`;
+      const fileBufferPSD = psdFile.buffer;
+
+      const blobPSD = bucket.file(fileNamePSD);
+      const blobStreamPSD = blobPSD.createWriteStream();
+
+      blobStreamPSD.on('error', (err) => {
+        console.error('Error uploading PSD to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading PSD to Google Cloud Storage' });
+      });
+
+      blobStreamPSD.on('finish', async () => {
+        // Update data produk dengan URL file PSD baru
+        updatedProductData.file_psd = fileNamePSD;
+        await existingProduct.update(updatedProductData);
+        // Jangan lupa hapus file PSD lama jika perlu
+        // await deleteOldFile(existingProduct.file_psd);
+      });
+
+      blobStreamPSD.end(fileBufferPSD);
+    }
+
+    // Proses serupa untuk file mockup
+    if (mockupFile) {
+      const folderName = "fileproduct";
+      const fileNameMockup = `${folderName}/product_${productId}_mockup_${Date.now()}${path.extname(mockupFile.originalname)}`;
+      const fileBufferMockup = mockupFile.buffer;
+
+      const blobMockup = bucket.file(fileNameMockup);
+      const blobStreamMockup = blobMockup.createWriteStream();
+
+      blobStreamMockup.on('error', (err) => {
+        console.error('Error uploading mockup to Google Cloud Storage:', err);
+        res.status(500).json({ error: 'Error uploading mockup to Google Cloud Storage' });
+      });
+
+      blobStreamMockup.on('finish', async () => {
+        // Update data produk dengan URL file mockup baru
+        updatedProductData.file_mockup = fileNameMockup;
+        await existingProduct.update(updatedProductData);
+        // Jangan lupa hapus file mockup lama jika perlu
+        // await deleteOldFile(existingProduct.file_mockup);
+      });
+      
+      blobStreamMockup.end(fileBufferMockup);
+    }
     res.json({ message: 'Informasi produk berhasil diperbarui.' });
   } catch (error) {
     console.error('Error updating product:', error.message);
@@ -112,6 +362,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
   createProduct,
+  upload,
   getAllProducts,
   getProductById,
   updateProduct,

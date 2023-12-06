@@ -2,6 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const Store = require('./Store');
+const Category = require('./Category');
 
 const Product = sequelize.define('products', {
   id: {
@@ -40,5 +41,8 @@ const Product = sequelize.define('products', {
 Store.hasMany(Product);
 // Menunjukkan bahwa Product dimiliki oleh satu Store
 Product.belongsTo(Store);
+
+Category.hasMany(Product);
+Product.belongsTo(Category);
 
 module.exports = Product;

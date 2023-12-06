@@ -134,7 +134,7 @@ const updateUserAddress = async (req, res) => {
 //   }
 // };
 
-const deleteUserAddress = async (req, res) => {
+const deleteUserAddress = async (req, res) => {postman
   const { id } = req.params;
 
   try {

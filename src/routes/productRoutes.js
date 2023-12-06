@@ -5,7 +5,11 @@ const productController = require('../controllers/productController');
 const authenticateToken = require('../middleware/authenticateToken');
 
 // Rute untuk membuat produk baru
-router.post('/create', authenticateToken, productController.createProduct);
+router.post('/create', authenticateToken, productController.upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'file_psd', maxCount: 1 },
+    { name: 'file_mockup', maxCount: 1 },
+  ]), productController.createProduct);
 
 // Rute untuk mendapatkan semua produk di dalam toko
 router.get('/all', authenticateToken, productController.getAllProducts);
@@ -14,7 +18,11 @@ router.get('/all', authenticateToken, productController.getAllProducts);
 router.get('/:id', authenticateToken, productController.getProductById);
 
 // Rute untuk memperbarui produk
-router.put('/:id/update', authenticateToken, productController.updateProduct);
+router.put('/:id/update', authenticateToken, productController.upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'file_psd', maxCount: 1 },
+    { name: 'file_mockup', maxCount: 1 },
+  ]), productController.updateProduct);
 
 // Rute untuk menghapus produk
 router.delete('/:id/delete', authenticateToken, productController.deleteProduct);

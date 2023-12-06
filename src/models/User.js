@@ -33,16 +33,6 @@ const User = sequelize.define('users', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  // id_address: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: true,
-  //   references: {
-  //     model: UserAddress,
-  //     key: 'id',
-  //   },
-  //   onDelete: 'CASCADE',
-  //   onUpdate: 'CASCADE',
-  // },
   photo: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -72,7 +62,6 @@ const User = sequelize.define('users', {
   },
 });
 
-// Menunjukkan bahwa User memiliki satu alamat (UserAddress)
 UserAddress.hasOne(User, { foreignKey: 'id_address'});
 User.belongsTo(UserAddress, { foreignKey: 'id_address'})
 
