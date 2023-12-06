@@ -1,16 +1,18 @@
-// src/config/db.js
 const { Sequelize } = require('sequelize');
-const config = require('./config.json')[process.env.NODE_ENV || 'development'];
+const dotenv = require('dotenv');
+dotenv.config();
+// const config = require('./config.json')[process.env.NODE_ENV || 'development'];
 
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  {
-    host: config.host,
-    dialect: config.dialect
-  }
-);
+const config = {
+  database: process.env.DB_NAME,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  host: process.env.INSTANCE_HOST,
+  port: process.env.DB_PORT,
+  dialect: 'mysql',
+}
+
+const sequelize = new Sequelize(config);
 
 sequelize.authenticate()
   .then(() => {

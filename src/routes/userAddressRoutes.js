@@ -9,10 +9,11 @@ const {
   deleteUserAddress,
 } = require('../controllers/userAddressController');
 
+
 // Endpoint CRUD user address
 router.post('/', authenticateToken, createUserAddress);
-router.get('/:id', authenticateToken, getUserAddresses);
-router.put('/:id', authenticateToken, updateUserAddress);
+router.get('/', authenticateToken, getUserAddresses);
+router.put('/update', authenticateToken, updateUserAddress);
 router.delete('/:id', authenticateToken, deleteUserAddress);
 
 module.exports = router;

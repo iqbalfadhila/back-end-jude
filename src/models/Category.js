@@ -1,16 +1,14 @@
-// src/models/Province.js
-const { DataTypes, Sequelize } = require('sequelize');
-const sequelize = require('../config/db');
-const City = require('./City')
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/db");
 
-const Province = sequelize.define('provinces', {
+const Category = sequelize.define('categories', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
     allowNull: false,
   },
-  province_name: {
+  category_name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -24,6 +22,6 @@ const Province = sequelize.define('provinces', {
     allowNull: false,
     defaultValue: DataTypes.NOW,
   },
-});
+})
 
-module.exports = Province;
+module.exports = Category

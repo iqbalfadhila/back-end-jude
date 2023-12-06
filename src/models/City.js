@@ -10,16 +10,6 @@ const City = sequelize.define('cities', {
     autoIncrement: true,
     allowNull: false,
   },
-  // id_province: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  //   references: {
-  //     model: Province,
-  //     key: 'id',
-  //   },
-  //   onDelete: 'CASCADE',
-  //   onUpdate: 'CASCADE',
-  // },
   city_name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -37,7 +27,7 @@ const City = sequelize.define('cities', {
 });
 
 // Definisi hubungan dengan model City (one-to-many)
-Province.hasMany(City, { foreignKey: 'id_province'});
+Province.hasMany(City, { foreignKey: 'id_province', onDelete: 'CASCADE' });
 City.belongsTo(Province, { foreignKey: 'id_province'});
 
 module.exports = City;
