@@ -5,6 +5,8 @@ const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const multer = require('multer');
 const { Op } = require('sequelize');
+const Category = require('../models/Category');
+const Style = require('../models/Style');
 
 const storage = new Storage({
   keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'), // Replace with the path to your key file
@@ -16,7 +18,7 @@ const bucket = storage.bucket('bucket-jude-406606'); // Replace with your Google
 const upload = multer({storage: multer.memoryStorage()});
 
 const createProduct = async (req, res) => {
-  const { name, price, description, categoryId } = req.body;
+  const { name, price, description, categoryId, styleId } = req.body;
   const storeId = req.user.id_store; // Ambil ID toko dari pengguna yang terautentikasi
   console.log(storeId);
 
@@ -26,6 +28,18 @@ const createProduct = async (req, res) => {
 
     if (!existingStore) {
       return res.status(404).json({ message: 'Toko tidak ditemukan.' });
+    }
+
+    const existingCategory = await Category.findByPk(categoryId);
+
+    if (!existingCategory) {
+      return res.status(404).json({ message: 'Category not found!' });
+    }
+
+    const existingStyle = await Style.findByPk(styleId);
+
+    if (!existingStyle) {
+      return res.status(404).json({ message: 'Style not found!' });
     }
 
     // Ambil file gambar dan file PSD dari request
@@ -76,6 +90,7 @@ const createProduct = async (req, res) => {
       price,
       description,
       categoryId,
+      styleId,
       storeId,
       // ...Tambahkan atribut lain yang sesuai dengan kebutuhan model Product...
     });
@@ -198,7 +213,7 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const productId = req.params.id;
-  const { name, price, description, categoryId } = req.body;
+  const { name, price, description, categoryId, styleId } = req.body;
 
   try {
     // Cek apakah produk dengan ID tersebut ada
@@ -250,13 +265,14 @@ const updateProduct = async (req, res) => {
     }
 
     // Perbarui informasi produk
-    const updatedProductData = {
+    await Product.update({
       name,
       price,
       description,
-      categoryId
+      categoryId,
+      styleId,
       // ...Tambahkan atribut lain yang sesuai dengan kebutuhan model Product...
-    };
+    }, {where: { id: productId }});
 
     // Simpan file foto ke Google Cloud Storage
     if (photoFile) {
@@ -316,7 +332,7 @@ const updateProduct = async (req, res) => {
 
       const blobMockup = bucket.file(fileNameMockup);
       const blobStreamMockup = blobMockup.createWriteStream();
-
+a
       blobStreamMockup.on('error', (err) => {
         console.error('Error uploading mockup to Google Cloud Storage:', err);
         res.status(500).json({ error: 'Error uploading mockup to Google Cloud Storage' });

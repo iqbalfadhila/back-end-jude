@@ -65,8 +65,8 @@ const updateCategory = async (req, res) => {
 		const CategoryToUpdate = await Category.findByPk(id);
 
 		if (!CategoryToUpdate) {
-      return res.status(404).json({ message: 'Category not found.' });
-    }
+			return res.status(404).json({ message: 'Category not found.' });
+		}
 
 		// Cek apakah provinsi dengan nama yang sama sudah ada (kecuali provinsi yang sedang diupdate)
     const existingCategory = await Category.findOne({

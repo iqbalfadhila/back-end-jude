@@ -10,6 +10,7 @@ const userRoutes = require('./routes/userRoutes')
 const storeRoutes = require('./routes/storeRoutes');
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const styleRoutes = require('./routes/styleRoutes');
 const authenticateToken = require('./middleware/authenticateToken');
 const authorizeRole = require('./middleware/authorizeRole');
 
@@ -30,20 +31,7 @@ app.use('/api/user', authenticateToken, userRoutes);
 app.use('/api/store', authenticateToken, storeRoutes);
 app.use('/api/product', authenticateToken, productRoutes);
 app.use('/api/category', authenticateToken, categoryRoutes);
-
-// app.get ("/test", authenticateToken, async (res, req) => {
-//   // const province = await Province.findByPk(1);
-//   // const cities = await province.getCities();
-
-//   // // Menampilkan nama-nama kota
-//   // cities.forEach(city => {
-//   //   console.log(city.city_name);
-//   // });
-//   // const city = await City.findByPk(1);
-//   // const province = await city.getProvince();
-
-//   // console.log(province);
-// })
+app.use('/api/style', authenticateToken, styleRoutes);
 
 app.get('/user', authenticateToken, authorizeRole('user'), (req, res) => {
   res.json({ message: 'Halo, pengguna biasa!' });
