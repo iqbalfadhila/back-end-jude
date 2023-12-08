@@ -37,7 +37,7 @@ app.get('/user', authenticateToken, authorizeRole('user'), (req, res) => {
   res.json({ message: 'Halo, pengguna biasa!' });
 });
 // Sync database dan jalankan server
-sequelize.sync({force: false}).then(() => {
+sequelize.sync({force: true}).then(() => {
   app.listen(port, () => {
     console.log(`Server berjalan di http://localhost:${port}`);
   });
