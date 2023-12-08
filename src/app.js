@@ -10,6 +10,7 @@ const userRoutes = require('./routes/userRoutes')
 const storeRoutes = require('./routes/storeRoutes');
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const styleRoutes = require('./routes/styleRoutes');
 const authenticateToken = require('./middleware/authenticateToken');
 const authorizeRole = require('./middleware/authorizeRole');
 
@@ -27,9 +28,10 @@ app.use('/api/province', authenticateToken, provinceRoutes);
 app.use('/api/city', authenticateToken, cityRoutes);
 app.use('/api/user-address', authenticateToken, userAddressRoutes);
 app.use('/api/user', authenticateToken, userRoutes);
-app.use('/api/store', authenticateToken, storeRoutes);
+app.use('/api/store', authenticateToken, storeRoutes); 
 app.use('/api/product', authenticateToken, productRoutes);
 app.use('/api/category', authenticateToken, categoryRoutes);
+app.use('/api/style', authenticateToken, styleRoutes);
 
 // app.get ("/test", authenticateToken, async (res, req) => {
 //   // const province = await Province.findByPk(1);
