@@ -24,4 +24,5 @@ const Style = sequelize.define('styles', {
         defaultValue: DataTypes.NOW,
     }
 });
+
 module.exports = Style;

@@ -1,7 +1,6 @@
 // src/models/Province.js
-const { DataTypes, Sequelize } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const City = require('./City')
 
 const Province = sequelize.define('provinces', {
   id: {

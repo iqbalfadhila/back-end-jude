@@ -1,17 +1,12 @@
 // src/controllers/authController.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const User = require('../models/User'); // Menggunakan objek User dari models
+const User = require('../models/User');
 const { Op } = require('sequelize');
 
 const register = async (req, res) => {
   const { username, email, password, fullname, phone, gender, date_of_birth } = req.body;
 
-  // // Validasi bahwa semua field harus diisi
-  // if (!username || !email || !password || !fullname || !phone || !gender || !date_of_birth) {
-  //   return res.status(400).json({ message: 'All fields must be filled in.' });
-  // }
-  // Validasi bahwa semua field harus diisi
   if (!username) {
     return res.status(400).json({ message: 'Username must be filled in.' });
   }
@@ -95,7 +90,6 @@ const login = async (req, res) => {
   }
 
   try {
-    // Menggunakan [Op.or] untuk mencari berdasarkan email, username, atau phone
     const user = await User.findOne({
       where: {
         [Op.or]: [

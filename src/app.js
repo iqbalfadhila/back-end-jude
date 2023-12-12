@@ -22,22 +22,22 @@ const port = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 
+// Routes
 app.use('/auth', authRoutes);
-// Autentikasi JWT middleware
-app.use('/api/province', authenticateToken, provinceRoutes);
-app.use('/api/city', authenticateToken, cityRoutes);
-app.use('/api/user-address', authenticateToken, userAddressRoutes);
-app.use('/api/user', authenticateToken, userRoutes);
-app.use('/api/store', authenticateToken, storeRoutes);
-app.use('/api/product', authenticateToken, productRoutes);
-app.use('/api/category', authenticateToken, categoryRoutes);
-app.use('/api/style', authenticateToken, styleRoutes);
+app.use('/api/province', provinceRoutes);
+app.use('/api/city', cityRoutes);
+app.use('/api/user-address', userAddressRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/store', storeRoutes);
+app.use('/api/product', productRoutes);
+app.use('/api/category', categoryRoutes);
+app.use('/api/style', styleRoutes);
 
 app.get('/user', authenticateToken, authorizeRole('user'), (req, res) => {
   res.json({ message: 'Halo, pengguna biasa!' });
 });
 // Sync database dan jalankan server
-sequelize.sync({force: true}).then(() => {
+sequelize.sync({force: false}).then(() => {
   app.listen(port, () => {
     console.log(`Server berjalan di http://localhost:${port}`);
   });

@@ -168,7 +168,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-const getAllProducts = async (req, res) => {
+const getAllProductsStore = async (req, res) => {
   const storeId = req.user.id_store; // Ambil ID toko dari pengguna yang terautentikasi
 
   try {
@@ -376,6 +376,112 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getAllProducts = async(req, res) => {
+  try {
+    const products = await Product.findAll();
+    res.json(products);
+  } catch (error) {
+    console.error('Error getting products:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const getAllProductsByStore = async (req, res) => {
+  try {
+    const storeIdentifier = req.params.storeIdentifier;
+
+    let storeCondition;
+    let store;
+
+    if (!isNaN(storeIdentifier)) {
+      store = await Store.findByPk(storeIdentifier);
+    } else {
+      store = await Store.findOne({
+        where: { store_name: storeIdentifier }
+      });
+    }
+
+    if (!store) {
+      return res.status(404).json({ message: 'Store not found!' });
+    }
+
+    storeCondition = { storeId: store.id };
+
+    const products = await Product.findAll({
+      where: storeCondition
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const getAllProductsByStyle = async (req, res) => {
+  try {
+    const styleIdentifier = req.params.styleIdentifier;
+
+    let styleCondition;
+    let style;
+
+    if (!isNaN(styleIdentifier)) {
+      style = await Style.findByPk(styleIdentifier);
+    } else {
+      style = await Style.findOne({
+        where: { style_name: styleIdentifier }
+      });
+    }
+
+    if (!style) {
+      return res.status(404).json({ message: 'Style not found!' });
+    }
+
+    styleCondition = { styleId: style.id };
+
+    const products = await Product.findAll({
+      where: styleCondition
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+const getAllProductsByCategory = async (req, res) => {
+  try {
+    const categoryIdentifier = req.params.categoryIdentifier;
+
+    let categoryCondition;
+    let category;
+
+    if (!isNaN(categoryIdentifier)) {
+      category = await Category.findByPk(categoryIdentifier);
+    } else {
+      category = await Category.findOne({
+        where: { category_name: categoryIdentifier }
+      });
+    }
+
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found!' });
+    }
+
+    categoryCondition = { categoryId: category.id };
+
+    const products = await Product.findAll({
+      where: categoryCondition
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   createProduct,
   upload,
@@ -383,4 +489,7 @@ module.exports = {
   getProductById,
   updateProduct,
   deleteProduct,
+  getAllProductsByStore,
+  getAllProductsByStyle,
+  getAllProductsByCategory,
 };

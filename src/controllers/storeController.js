@@ -5,6 +5,7 @@ const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const multer = require('multer');
 const { Op } = require('sequelize');
+const Product = require('../models/Product');
 
 const storage = new Storage({
   keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'), // Replace with the path to your key file
@@ -270,12 +271,38 @@ const deleteStore = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-  
-  module.exports = {
-    createStore,
-    upload,
-    updateStore,
-    getAllStore,
-    getStoreById,
-    deleteStore,
-  };
+
+const getAllProductsByStoreName = async (req, res) => {
+  try {
+    const storeName = req.params.storeName; // Ambil nama toko dari parameter URL
+
+    // Cari ID toko berdasarkan nama toko
+    const store = await Store.findOne({
+      where: { store_name: storeName },
+    });
+
+    if (!store) {
+      return res.status(404).json({ message: 'Toko tidak ditemukan.' });
+    }
+
+    // Cari semua produk yang terkait dengan toko tersebut
+    const products = await Product.findAll({
+      where: { storeId: store.id },
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+module.exports = {
+  createStore,
+  upload,
+  updateStore,
+  getAllStore,
+  getStoreById,
+  deleteStore,
+  getAllProductsByStoreName,
+};

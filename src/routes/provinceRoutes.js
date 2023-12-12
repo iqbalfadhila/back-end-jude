@@ -1,13 +1,20 @@
 // src/routes/provinceRoutes.js
 const express = require('express');
-const router = express.Router();
 const authenticateToken = require('../middleware/authenticateToken');
-const provinceController = require('../controllers/provinceController');
+const { 
+   getAllProvinces,
+   getProvinceById,
+   createProvince,
+   updateProvince,
+   deleteProvince,
+} = require('../controllers/provinceController');
 
-router.get('/', authenticateToken, provinceController.getAllProvinces);
-router.get('/:id', authenticateToken, provinceController.getProvinceById);
-router.post('/', authenticateToken, provinceController.createProvince);
-router.put('/:id', authenticateToken, provinceController.updateProvince);
-router.delete('/:id', authenticateToken, provinceController.deleteProvince);
+const router = express.Router();
+
+router.get('/', getAllProvinces);
+router.get('/:id', getProvinceById);
+router.post('/', authenticateToken, createProvince);
+router.put('/:id', authenticateToken, updateProvince);
+router.delete('/:id', authenticateToken, deleteProvince);
 
 module.exports = router;

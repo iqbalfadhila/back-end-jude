@@ -1,4 +1,4 @@
-const { where, Op } = require("sequelize");
+const { Op } = require("sequelize");
 const Style = require("../models/Style");
 
 const getAllStyle = async (req, res) => {
