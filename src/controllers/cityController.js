@@ -131,10 +131,30 @@ const deleteCity = async (req, res) => {
   }
 };
 
+const getAllCitiesByProvinceId = async (req, res) => {
+  const { id_province } = req.params;
+  console.log(id_province);
+
+  try {
+    const citiesByProvinceId = await Province.findByPk(id_province);
+
+    if (!citiesByProvinceId) {
+      return res.status(404).json({ message: "province not found!"})
+    }
+
+    const cities = await City.findAll({ where: { id_province } });
+
+    res.json(cities);
+  } catch (error) {
+    console.error('Error getting cities by province:', error.message);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
 module.exports = {
   getAllCities,
   getCityById,
   createCity,
   updateCity,
   deleteCity,
+  getAllCitiesByProvinceId,
 };

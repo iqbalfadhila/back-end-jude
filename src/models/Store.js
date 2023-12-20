@@ -24,6 +24,14 @@ const Store = sequelize.define('stores', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    email_store: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    phone_store: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

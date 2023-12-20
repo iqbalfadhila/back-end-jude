@@ -80,18 +80,24 @@ const updateUserAddress = async (req, res) => {
     const existingUser = await User.findByPk(userId);
 
     if (!existingUser || existingUser.id_address === null) {
-      return res.status(404).json({ message: 'User address not found.' });
+      const newUserAddress = await UserAddress.create({
+        id_city,
+        address,
+        portal_code,
+      });
+
+      await existingUser.update({ id_address: newUserAddress.id });
+    } else {
+      // Mendapatkan id alamat pengguna
+      const addressId = existingUser.id_address;
+
+      // Update user_address dengan mengisi id_address dengan id pengguna
+      await UserAddress.update({
+        id_city,
+        address,
+        portal_code,
+      }, { where: { id: addressId } });
     }
-
-    // Mendapatkan id alamat pengguna
-    const addressId = existingUser.id_address;
-
-    // Update user_address dengan mengisi id_address dengan id pengguna
-    await UserAddress.update({
-      id_city,
-      address,
-      portal_code,
-    }, { where: { id: addressId } });
 
     res.json({ message: 'User address updated successfully.' });
   } catch (error) {

@@ -38,9 +38,7 @@ const Product = sequelize.define('products', {
   },
 });
 
-// Menunjukkan bahwa Store memiliki banyak Product
 Store.hasMany(Product);
-// Menunjukkan bahwa Product dimiliki oleh satu Store
 Product.belongsTo(Store);
 
 Category.hasMany(Product);

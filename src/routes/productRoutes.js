@@ -1,30 +1,42 @@
 // src/routes/productRoutes.js
 const express = require('express');
-const router = express.Router();
-const productController = require('../controllers/productController');
 const authenticateToken = require('../middleware/authenticateToken');
+const authorizeRole = require('../middleware/authorizeRole');
+const {
+  createProduct,
+  upload,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  getAllProductsByStore,
+  getAllProductsByStyle,
+  getAllProductsByCategory,
+  getAllProductsFilter,
+} = require('../controllers/productController');
 
-// Rute untuk membuat produk baru
-router.post('/create', authenticateToken, productController.upload.fields([
+const router = express.Router();
+
+router.post('/create', authenticateToken, upload.fields([
     { name: 'photo', maxCount: 1 },
     { name: 'file_psd', maxCount: 1 },
     { name: 'file_mockup', maxCount: 1 },
-  ]), productController.createProduct);
+  ]), authorizeRole("designer"), createProduct);
 
-// Rute untuk mendapatkan semua produk di dalam toko
-router.get('/all', authenticateToken, productController.getAllProducts);
+router.get('/', getAllProducts);
 
-// Rute untuk mendapatkan produk berdasarkan ID
-router.get('/:id', authenticateToken, productController.getProductById);
+router.get('/:id', getProductById);
 
-// Rute untuk memperbarui produk
-router.put('/:id/update', authenticateToken, productController.upload.fields([
+router.put('/:id/update', authenticateToken, upload.fields([
     { name: 'photo', maxCount: 1 },
     { name: 'file_psd', maxCount: 1 },
     { name: 'file_mockup', maxCount: 1 },
-  ]), productController.updateProduct);
+  ]), authorizeRole("designer"), updateProduct);
 
-// Rute untuk menghapus produk
-router.delete('/:id/delete', authenticateToken, productController.deleteProduct);
+router.delete('/:id/delete', authorizeRole("designer"), authenticateToken, deleteProduct);
+
+router.get('/store/:storeIdentifier', getAllProductsByStore);
+router.get('/style/:styleIdentifier', getAllProductsByStyle);
+router.get('/category/:categoryIdentifier', getAllProductsByCategory);
 
 module.exports = router;

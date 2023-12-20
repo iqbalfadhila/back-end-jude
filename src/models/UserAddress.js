@@ -16,21 +16,10 @@ const UserAddress = sequelize.define('user_addresses', {
   },
   portal_code: {
     type: DataTypes.STRING,
-    allowNull: true, // Ubah ke false jika portal_code wajib diisi
+    allowNull: true,
   },
-  // id_city: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  //   references: {
-  //     model: City,
-  //     key: 'id',
-  //   },
-  //   onDelete: 'CASCADE',
-  //   onUpdate: 'CASCADE',
-  // },
 });
 
-// Definisi hubungan dengan model City (many-to-one)
 City.hasMany(UserAddress, { foreignKey: 'id_city'});
 UserAddress.belongsTo(City, { foreignKey: 'id_city'});
 

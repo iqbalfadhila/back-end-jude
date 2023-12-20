@@ -4,11 +4,11 @@ const path = require('path');
 const multer = require('multer');
 
 const storage = new Storage({
-  keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'), // Replace with the path to your key file
-  projectId: 'jude-406606', // Replace with your Google Cloud Project ID
+  keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'),
+  projectId: 'jude-406606',
 });
 
-const bucket = storage.bucket('bucket-jude-406606'); // Replace with your Google Cloud Storage bucket name
+const bucket = storage.bucket('bucket-jude-406606');
 
 // const imageFilter = (req, file, cb) => {
 //   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {

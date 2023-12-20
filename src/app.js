@@ -11,6 +11,8 @@ const storeRoutes = require('./routes/storeRoutes');
 const productRoutes = require('./routes/productRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const styleRoutes = require('./routes/styleRoutes');
+const favoriteRoutes = require('./routes/favoriteRoutes');
+const cartRoute = require('./routes/cartRoutes');
 const authenticateToken = require('./middleware/authenticateToken');
 const authorizeRole = require('./middleware/authorizeRole');
 
@@ -22,30 +24,18 @@ const port = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 
+// Routes
 app.use('/auth', authRoutes);
-// Autentikasi JWT middleware
-app.use('/api/province', authenticateToken, provinceRoutes);
-app.use('/api/city', authenticateToken, cityRoutes);
-app.use('/api/user-address', authenticateToken, userAddressRoutes);
-app.use('/api/user', authenticateToken, userRoutes);
-app.use('/api/store', authenticateToken, storeRoutes); 
-app.use('/api/product', authenticateToken, productRoutes);
-app.use('/api/category', authenticateToken, categoryRoutes);
-app.use('/api/style', authenticateToken, styleRoutes);
-
-// app.get ("/test", authenticateToken, async (res, req) => {
-//   // const province = await Province.findByPk(1);
-//   // const cities = await province.getCities();
-
-//   // // Menampilkan nama-nama kota
-//   // cities.forEach(city => {
-//   //   console.log(city.city_name);
-//   // });
-//   // const city = await City.findByPk(1);
-//   // const province = await city.getProvince();
-
-//   // console.log(province);
-// })
+app.use('/api/province', provinceRoutes);
+app.use('/api/city', cityRoutes);
+app.use('/api/user-address', userAddressRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/store', storeRoutes);
+app.use('/api/product', productRoutes);
+app.use('/api/category', categoryRoutes);
+app.use('/api/style', styleRoutes);
+app.use('/api/favorite', favoriteRoutes);
+app.use('/api/cart', cartRoute);
 
 app.get('/user', authenticateToken, authorizeRole('user'), (req, res) => {
   res.json({ message: 'Halo, pengguna biasa!' });
