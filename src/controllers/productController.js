@@ -18,7 +18,7 @@ const bucket = storage.bucket('bucket-jude-406606'); // Replace with your Google
 const upload = multer({storage: multer.memoryStorage()});
 
 const createProduct = async (req, res) => {
-  const { name, price, description, email_store, phone_store, categoryId, styleId } = req.body;
+  const { name, price, description, categoryId, styleId } = req.body;
   const storeId = req.user.id_store; // Ambil ID toko dari pengguna yang terautentikasi
   console.log(storeId);
 
@@ -90,8 +90,6 @@ const createProduct = async (req, res) => {
       price,
       description,
       categoryId,
-      email_store,
-      phone_store,
       styleId,
       storeId,
       // ...Tambahkan atribut lain yang sesuai dengan kebutuhan model Product...
@@ -215,7 +213,7 @@ const getProductById = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const productId = req.params.id;
-  const { name, price, description, email_store, phone_store, categoryId, styleId } = req.body;
+  const { name, price, description, categoryId, styleId } = req.body;
 
   try {
     // Cek apakah produk dengan ID tersebut ada
@@ -271,8 +269,6 @@ const updateProduct = async (req, res) => {
       name,
       price,
       description,
-      email_store,
-      phone_store,
       categoryId,
       styleId,
       // ...Tambahkan atribut lain yang sesuai dengan kebutuhan model Product...
