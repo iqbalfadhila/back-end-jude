@@ -13,7 +13,7 @@ steps:
   args:
     - 'run'
     - 'deploy'
-    - 'test-jude'
+    - 'jude'
     - '--image'
     - 'gcr.io/jude-406314/jude'
     - '--set-env-vars'
