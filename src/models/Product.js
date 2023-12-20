@@ -36,6 +36,11 @@ const Product = sequelize.define('products', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  status: {
+    type: DataTypes.ENUM("Sell", 'Sold'),
+    allowNull: false,
+    defaultValue: "Sell"
+  }
 });
 
 Store.hasMany(Product);

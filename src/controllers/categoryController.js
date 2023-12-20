@@ -21,7 +21,7 @@ const getCategoryById = async (req, res) => {
 			return res.status(404).json({ message: 'Category not found.' });
 		}
 		
-		res.json(city);
+		res.json(category);
 	} catch (error) {
 		console.error('Error getting category:', error.message);
 		res.status(500).json({ message: 'Internal Server Error' });
