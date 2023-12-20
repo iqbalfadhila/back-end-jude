@@ -5,10 +5,10 @@ const multer = require('multer');
 
 const storage = new Storage({
   keyFilename: path.join(__dirname, '../config/serviceAccountKey.json'),
-  projectId: 'jude-406606',
+  projectId: 'jude-406314',
 });
 
-const bucket = storage.bucket('bucket-jude-406606');
+const bucket = storage.bucket('storage_jude');
 
 // const imageFilter = (req, file, cb) => {
 //   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
